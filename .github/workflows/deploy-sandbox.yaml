@@ -30,3 +30,5 @@ jobs:
         # observability config
         grafana_datasource_dir: sandbox/observability/grafana/datasources
         prometheus_config: sandbox/observability/prometheus/prometheus.yml
+
+        tf_stack_destroy: true
