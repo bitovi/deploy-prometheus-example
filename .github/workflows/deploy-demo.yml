@@ -1,0 +1,34 @@
+name: Deploy Prometheus Demo
+
+on:
+    push:
+      branches: [ demo ]
+      paths:
+      - '.github/workflows/deploy-demo.yml'
+      - 'demo/observability/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ github.ref_name }}
+      url: ${{ steps.deploy.outputs.lb_url }}
+
+    steps:
+    # Bitovi's Deploy Prometheus
+    - id: deploy
+      name: Deploy
+      uses: bitovi/github-actions-deploy-prometheus@v0.1.0
+      with:
+        aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID_SANDBOX}}
+        aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY_SANDBOX}}
+        env_ghs: ${{ secrets.DOT_ENV }}
+        aws_default_region: us-east-1 
+
+        aws_ec2_instance_type: t2.small
+        
+        # observability config
+        grafana_datasource_dir: demo/observability/grafana/datasources
+        prometheus_config: demo/observability/prometheus/prometheus.yml
+
+        # tf_stack_destroy: true
